@@ -3,8 +3,8 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Project 1 Details</title>
-  <link rel="stylesheet" href="styles.css">
+  <title>Project: Outgun - Details</title>
+  <link rel="stylesheet" href="stylesProject.css">
 </head>
 <body>
   <header>
@@ -17,39 +17,111 @@
 
   <section id="project">
     <div class="container">
-      <h2>OUTGUN</h2>
+      <h1>Project Showcase: Outgun</h1>
       <div class="project-image">
-        <img src="project1.png" alt="Project 1" width="500" height="400">
+        <img src="project1.png" alt="Project 1 - Outgun" width="500" height="400">
       </div>
-      <a href="https://idunnonoodles.itch.io/outgun">Let's play</a>
-      
+      <a href="https://idunnonoodles.itch.io/outgun">Play Outgun</a>
+
     </div>
   </section>
 
-  <section id="details">
+  <section id="description">
     <div class="container">
-        <h1>Descriptions</h1>
-        <p> 
-            Rather than a person using a gun to protect someone, in Outgun, you play as the gun itself to protect a person. Play as a pistol, sub machine gun or rocket launcher and bounce around in the air from the recoil when you fire.
-        </p>
-        <h1>Game mechanics</h1>
-        <p>
-            Going to the person you are protecting will reload your gun.
-            The pistol, sub machine gun, and rocket launcher shoot differently:
-        </p>
-        <ul>
-            <li>Pistol: single fire, 25 bullets</li>
-            <li>Sub machine gun: full auto, 30 bullets</li>
-            <li>Rocket launcher: single fire, has an explosive area of effect, 7 bullets</li>
-        </ul>
-        <p>            
-            Enemies have a 15% chance to drop a sub machine gun or rocket launcher that you collide into to switch weapons.
-            Shooting will bounce the gun away from the crosshair from the recoil.
-        </p>            
-      </div>
+      <h2>Project Description</h2>
+      <p>
+        Outgun is a unique game that offers players the opportunity to embody a weapon – a pistol, submachine gun, or rocket launcher – tasked with safeguarding an individual. The unconventional twist lies in assuming the role of the firearm itself, bringing forth novel gameplay mechanics and challenges.
+      </p>
+    </div>
   </section>
+
+  <section id="game-mechanics">
+    <div class="container">
+      <h2>Game Mechanics</h2>
+      <p>
+        The game mechanics of Outgun revolve around strategic firearm utilization and resource management. Players will find distinct shooting attributes for each weapon type:
+      </p>
+      <ul>
+        <li>Pistol: Single fire, 25 bullets</li>
+        <li>Submachine gun: Full auto, 30 bullets</li>
+        <li>Rocket launcher: Single fire with an explosive area of effect, 7 rockets</li>
+      </ul>
+      <p>
+        In addition, enemies have a 15% chance to drop alternative weapons upon collision, offering players opportunities to switch weaponry.
+      </p>
+    </div>
+  </section>
+
+  <section id="code-showcase">
+    <div class="container">
+      <h2>Code Showcase</h2>
+      <p>Highlighted Code Snippets for Gun Control</p>
+      <pre>
+void Update() {
+  bi.SetCurrentBullets(currentNumberOfBullets, numberOfBullets);
+  if (!targetHolding) {
+      // Gun rotation
+      var dir = Input.mousePosition - Camera.main.WorldToScreenPoint(transform.position);
+      var angle = Mathf.Atan2(dir.y, dir.x) * Mathf.Rad2Deg;
+      transform.rotation = Quaternion.AngleAxis(angle, Vector3.forward);
+
+      // Gun firing
+      if (Input.GetButtonDown("Fire1") 
+          && currentNumberOfBullets != 0 
+          && type == GunType.SingleShoot 
+          && canFire) {
+          StartCoroutine(FireSingle(dir));
+      }
+
+      if (Input.GetButton("Fire1") &&
+          type == GunType.Burst &&
+          canFire &&
+          currentNumberOfBullets != 0) {
+          StartCoroutine(FireSingle(dir));
+      }
+  } else {
+      Quaternion forwardQuaternion = Quaternion.identity;
+      forwardQuaternion.eulerAngles = Vector3.forward;
+      transform.rotation = forwardQuaternion;
+  }
+}
+
+IEnumerator FireSingle(Vector3 dir) {
+    canFire = false;
+    GetComponent<Rigidbody>().AddForce(-dir.normalized * m_Thrust, ForceMode.Impulse);
+    Instantiate(bullet, bulletSpawnPoint.position, bulletSpawnPoint.rotation);
+    audioSource.Play();
+    currentNumberOfBullets--;
+    yield return new WaitForSeconds(bulletWaitTime);
+    canFire = true;
+}
+
+public void SwitchGun(GameObject newGun) {
+    Instantiate(newGun, transform.position, transform.rotation);
+    Destroy(gameObject);
+}
+
+public void Reload() {
+    currentNumberOfBullets = numberOfBullets;
+}
+
+public void HoldByTarget(bool value) {
+    targetHolding = value;
+}
+
+void OnCollisionEnter(Collision other) {
+    if (other.gameObject.CompareTag("Wall") && !targetHolding) {
+        // Debug.Log("ded");
+    }
+}      
+    </pre>
+    </div>
+  </section>
+
   <footer>
-    <p>&copy; 2023 Your Name. All rights reserved.</p>
+    <div class="container">
+      <p>&copy; 2023 Huan Hoang. All rights reserved.</p>
+    </div>
   </footer>
 </body>
 </html>
