@@ -156,3 +156,7 @@ form button:hover {
 p{
   font-size: large;
 }
+
+.introduction{
+  white-space: pre-wrap;
+}

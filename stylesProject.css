@@ -39,7 +39,14 @@ section {
   margin-bottom: 40px;
 }
 
-.project-image img {
+.project-image video{
+  display: block;
+  margin-left: auto;
+  margin-right: auto;
+}
+
+
+.project-image img{
   display: block;
   margin: 0 auto;
   max-width: 100%;
