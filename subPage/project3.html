@@ -1,0 +1,121 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Project: EVOLUTION - Details</title>
+  <link rel="stylesheet" href="../css/stylesProject.css">
+</head>
+<body>
+  <header>
+    <a href="../index.html">Home</a>
+  </header>
+
+  <section id="project">
+    <div class="container">
+      <h1>Project Showcase: EVOLUTION</h1>
+      <div class="project-image">
+        <img src="../images/project/project3.png" alt="Project 3 - EVOLUTION" width="600" height="400">
+        <video width="320" height="240" controls>
+          <source src="Evolution.mp4" type="video/mp4">
+          Your browser does not support the video tag.
+        </video>
+      </div>
+      <a href="https://huanhoangvb.itch.io/evolution">Play</a>
+
+    </div>
+  </section>
+
+  <section id="description">
+    <div class="container">
+      <h2>Project Description</h2>
+      <p>
+        You assume the role of a diminutive organism, endeavoring to evolve and adapt while navigating the challenges of survival.
+      </p>
+    </div>
+  </section>
+
+  <section id="game-mechanics">
+    <div class="container">
+      <h2>Game Mechanics</h2>
+      <p>
+        Use WASD key for movement and explore your surroundings. Interact with the luminous food sources to facilitate your evolution.
+      </p>
+    </div>
+  </section>
+
+  <section id="code-showcase">
+    <div class="container">
+      <h2>Code Showcase</h2>
+      <p>Highlighted Code Snippets for Player</p>
+      <pre>
+        // Update is called once per frame
+        void Update()
+        {
+            SetPlayerVelocity();
+            RotateInDirectionOfInput();
+    
+            timeStamp += Time.deltaTime;
+        }
+    
+        public void SetValueIntoScriptableObject()
+        {
+            playerSO.Evolution = evolutionBar.value;
+        }
+    
+        private void SetPlayerVelocity()
+        {
+            smoothMovementInput = Vector2.SmoothDamp(
+                smoothMovementInput, 
+                movementInput, 
+                ref movementInputSmoothVelocity, 
+                0.1f);
+            rb.velocity = smoothMovementInput;
+        }
+    
+        private void OnMove(InputValue playerInput)
+        {
+            movementInput = playerInput.Get<Vector2>() * movementSpeed;
+        }
+        
+    
+        private void OnCollisionEnter2D(Collision2D collision)
+        {
+            if (collision.transform.CompareTag("food"))
+            {
+                gainEvoPoint(0.3f);
+                Destroy(collision.gameObject);
+                light.pointLightOuterRadius += 0.7f;
+                SetValueIntoScriptableObject();
+            }
+        }
+    
+        private void RotateInDirectionOfInput() {
+            if (movementInput != Vector2.zero) 
+            {
+                Quaternion targetRotation = Quaternion.LookRotation(transform.forward, smoothMovementInput);
+                Quaternion rotation = Quaternion.RotateTowards(transform.rotation, targetRotation, rotationSpeed * Time.deltaTime);
+    
+                rb.MoveRotation(rotation);
+            }
+        }
+    
+        public override int Evolve()
+        {
+            playerSO.evoIndex = base.Evolve();
+            SetDefaultValue();
+            SetValueIntoScriptableObject();
+    
+            return evoIndex+1;
+        }
+      </pre>
+    </div>
+  </section>
+
+  <footer>
+    <div class="container">
+      <p>&copy; 2023 Huan Hoang. All rights reserved.</p>
+    </div>
+  </footer>
+</body>
+</html>

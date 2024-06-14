@@ -1,0 +1,199 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Project: Super Secret Party - Details</title>
+  <link rel="stylesheet" href="../css/stylesProject.css">
+</head>
+<body>
+  <header>
+    <a href="../index.html">Home</a>
+  </header>
+
+  <section id="project">
+    <div class="container">
+      <h1>Project Showcase: Super Secret Party</h1>
+      <div class="project-image">
+        <img src="../images/project/project5.png" alt="Project 5 - Super Secret Party" width="600" height="400">
+      </div>
+      <a href="https://sweettoothstudios.itch.io/super-secret-party">Play</a>
+
+    </div>
+  </section>
+
+  <section id="description">
+    <div class="container">
+      <h2>Project Description</h2>
+      <p> This is a project I created with a fantastic team for the Spooktober 5th Annual VN Jam. 
+        <br>It marks my first time using Ren'Py to develop a visual novel game, and it was a remarkable experience. 
+        <br>Collaborating with such talented individuals allowed me to explore creative storytelling, and using Python in a different engine broadened my development skills.</p>
+      <br>
+      <p>
+        This game is about attending a party full of monsters! One day at school a girl with blue hair approaches you! 
+        Turns out her name is  Frankie and she is hosting this "Super Secret Party"      
+      </p>
+    </div>
+  </section>
+
+  <section id="game-mechanics">
+    <div class="container">
+      <h2>Game Mechanics</h2>
+      <p>
+        A Narrative Visual Novel game where based on your chosen route, different scenario will unfold!
+        <br>With 3 different character routes
+        <br>Partially voice-acted story
+      </p>
+    </div>
+  </section>
+
+  <section id="code-showcase">
+    <div class="container">
+      <h2>Code Showcase</h2>
+      <p>Highlighted Code Snippets for MiniGame: Running</p>
+      <pre>
+        screen countdown_timer:
+        frame:
+          background "#00000080"
+          align(0.5, 0.1)
+          xysize 400, 250
+          text "Get Ready!" size 40 xalign 0.5
+          text "[countdown_timer]" size 40 xalign 0.5 yalign 0.3
+        
+        timer 1.0 action If(countdown_timer > 1, SetVariable("countdown_timer", countdown_timer-1), [SetVariable("countdown_timer",0), Hide("countdown_timer")]) repeat If(countdown_timer > 1, True, False)
+
+        image arrow_keys:
+          zoom 0.5
+          "arrow_keys_1.png"
+          pause 0.5
+          "arrow_keys_2.png"
+          pause 0.5
+          repeat
+
+        init python:
+        def setup_running_game():   
+          global selected_character_pos
+
+          character_1.x = start_xpos
+          character_1.y = 260
+          character_1.speed = 1
+          character_2.x = start_xpos
+          character_2.y = 460
+          character_2.speed = 0.4
+          character_3.x = start_xpos
+          character_3.y = 660
+          character_3.speed = 0.3
+
+          if selected_character == "character_1":
+              selected_character_pos = [character_1.x,character_1.y]
+          elif selected_character == "character_2":
+              selected_character_pos = [character_2.x,character_2.y]
+          elif selected_character == "character_3":
+              selected_character_pos = [character_3.x,character_3.y]
+
+          renpy.hide_screen("running_minigame_menu") 
+          renpy.show_screen("running_minigame_game")    
+
+        def character_events(event, x, y, st):
+          global left_key_pressed
+          global right_key_pressed
+          global player_start_move
+
+          if event.type == renpy.pygame_sdl2.KEYDOWN and countdown_timer == 0:
+            keys_pressed = renpy.pygame_sdl2.key.get_pressed()
+            
+            if keys_pressed[renpy.pygame_sdl2.K_LEFT]:
+              player_start_move = True
+              left_key_pressed = True
+            if keys_pressed[renpy.pygame_sdl2.K_RIGHT]:
+              player_start_move = True
+              right_key_pressed = True
+
+            if left_key_pressed and right_key_pressed:
+              left_key_pressed = False
+              right_key_pressed = False
+
+              if selected_character == "character_1":
+                character_move(character_1)  
+              elif selected_character == "character_2":
+                character_move(character_2)  
+              elif selected_character == "character_3":
+                character_move(character_3)  
+
+        def character_move(character):
+          global goal_reached
+          global who_won
+          global selected_character_pos
+
+          if character.x < goal_xpos:
+            character.x += player_speed
+            selected_character_pos = [character.x, character.y]
+            renpy.restart_interaction()
+            else:  
+              goal_reached = True
+              who_won = character
+              renpy.show_screen("game_over")
+              renpy.restart_interaction()
+        
+        def npc_move(character):
+          global goal_reached
+          global who_won
+          global selected_character_pos
+
+          if character.x < goal_xpos:
+            character.x += character.speed
+            selected_character_pos = [character.x, character.y]
+            #renpy.restart_interaction()
+          else:  
+            goal_reached = True
+            who_won = character
+            renpy.show_screen("game_over")
+            #renpy.restart_interaction()
+
+        def npc_movement(st):
+          if not goal_reached and countdown_timer == 0:
+            if selected_character == "character_1":
+              npc_move(character = character_2)
+              npc_move(character = character_3)
+            elif selected_character == "character_2":
+              npc_move(character = character_1)
+              npc_move(character = character_3)
+            elif selected_character == "character_3":
+              npc_move(character = character_1)
+              npc_move(character = character_2)    
+            return 0
+          elif countdown_timer != 0:
+            return 0
+          else:
+            return None
+
+        def reset_running_game():
+          global selected_character
+          global selected_character_pos
+          global who_won
+          global goal_reached
+          global countdown_timer
+
+          countdown_timer = 3
+          who_won = None
+          goal_reached = False
+          selected_character = None
+          selected_character_pos = [0,0]
+          character_1.x = start_xpos
+          character_2.x = start_xpos
+          character_3.x = start_xpos
+
+          renpy.hide_screen("game_over")
+          renpy.hide_screen("running_minigame_game")
+          renpy.show_screen("running_minigame_menu")
+      </pre>
+    </div>
+  </section>
+
+  <footer>
+    <div class="container">
+      <p>&copy; 2023 Huan Hoang. All rights reserved.</p>
+    </div>
+  </footer>
+</body>
+</html>
